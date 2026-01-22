@@ -16,7 +16,7 @@ type UsePrevNextButtonsType = {
 };
 
 export const usePrevNextButtons = (
-  emblaApi: EmblaCarouselType | undefined
+  emblaApi: EmblaCarouselType | undefined,
 ): UsePrevNextButtonsType => {
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -118,15 +118,13 @@ export const NextButton: React.FC<PropType> = (props) => {
 };
 
 export const HomeButton = () => {
-  const { setShowCarousel, showCarousel, setShowGallery } =
-    useContext(ImageContext);
+  const { setShowCarousel, setShowGallery } = useContext(ImageContext);
   return (
     <button
       className="embla__button"
       onClick={() => {
         setShowCarousel(false);
         setShowGallery(true);
-        (console.log("Homs  sasesssaas abutton clicked"), showCarousel);
       }}
     >
       <svg

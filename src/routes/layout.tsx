@@ -58,10 +58,6 @@ export default function Layout() {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log("scrollPosition1 in Layout:", scrollPosition);
-  }, [scrollPosition]);
-
-  useEffect(() => {
     if (!ref.current) return;
 
     const observer = new IntersectionObserver(

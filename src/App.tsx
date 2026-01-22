@@ -11,6 +11,7 @@ const routes = [
     children: [
       { index: true, element: <Images /> },
       { path: "about", element: <About /> },
+      { path: "*", element: <>Not Found</> },
     ],
   },
 ];

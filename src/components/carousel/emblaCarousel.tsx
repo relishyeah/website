@@ -19,7 +19,6 @@ type PropType = {
 const EmblaCarousel: React.FC<PropType> = (props) => {
   const { slides, options } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
-  console.log(23);
 
   const {
     prevBtnDisabled,
