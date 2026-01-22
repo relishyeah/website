@@ -11,7 +11,14 @@ const routes = [
     children: [
       { index: true, element: <Images /> },
       { path: "about", element: <About /> },
-      { path: "*", element: <div className="text-red-500 p-4">Not Found</div> },
+      {
+        path: "*",
+        element: (
+          <div className="text-red-500 p-4">
+            Heaven forbid a white boy gets a little motion
+          </div>
+        ),
+      },
     ],
   },
 ];
