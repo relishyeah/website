@@ -1,11 +1,11 @@
 import { Bars } from "./carousel/bar";
 import { useContext } from "react";
 import { getPosition } from "../utils/utils";
-import { HEADER_HEIGHT_VH } from "../constants";
 import { ScrollContext } from "../routes/layout";
+import { HEADER_HEIGHT_VH } from "../constants";
 
 export const QuinnRelyea = () => {
-  const { scrollPosition, showSidebar, isMobile } = useContext(ScrollContext);
+  const { scrollPosition, isMobile } = useContext(ScrollContext);
 
   return (
     <>
