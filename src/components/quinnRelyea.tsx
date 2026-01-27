@@ -33,7 +33,7 @@ export const QuinnRelyea = () => {
           fill="#ff0000"
           style={{
             stroke: "#ff0000",
-            strokeWidth: `${getPosition(7, 5, scrollPosition)}mm`,
+            strokeWidth: `${getPosition(7, 6, scrollPosition)}mm`,
             fill: "#ff0000",
           }}
         >
@@ -43,6 +43,7 @@ export const QuinnRelyea = () => {
           />
         </g>
       </svg>
+      {/* uinn relyea */}
       <svg
         width={"70%"}
         height={`${getPosition(100, 7.5, scrollPosition)}vh`}
@@ -50,7 +51,6 @@ export const QuinnRelyea = () => {
         style={{
           maxWidth: "105vw",
           maxHeight: "100vh",
-          // backgroundColor: "blue",
         }}
         className=" shrink-0 min-w-0"
         preserveAspectRatio="xMinYMid meet"
@@ -61,11 +61,11 @@ export const QuinnRelyea = () => {
           fillRule="evenodd"
           fontSize="9pt"
           stroke="#ff0000"
-          strokeWidth="10mm"
+          strokeWidth="9mm"
           fill="#ff0000"
           style={{
             stroke: "#ff0000",
-            strokeWidth: "10mm",
+            strokeWidth: "9mm",
             fill: "#ff0000",
           }}
         >

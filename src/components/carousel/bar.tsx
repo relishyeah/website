@@ -142,12 +142,16 @@ export const Bars: React.FC = () => {
   const { scrollPosition, setShowSidebar, showSidebar, isMobile } =
     useContext(ScrollContext);
 
-  const x = getPosition(60, isMobile ? 95 : 105, scrollPosition);
+  const x = getPosition(
+    isMobile ? 60 : 53,
+    isMobile ? 95 : 105,
+    scrollPosition,
+  );
   const y = getPosition(72, 22, scrollPosition);
 
   return (
     <div
-      className="absolute w-auto h-auto z-101  hover:cursor-pointer flex flex-col justify-center items-center"
+      className="absolute w-auto h-auto z-101  hover:cursor-pointer flex flex-col justify-center items-center  before:absolute before:-inset-3 before:content-[''] "
       style={{
         right: `${x}%`,
         top: `${y}%`,

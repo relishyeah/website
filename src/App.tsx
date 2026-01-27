@@ -9,7 +9,7 @@ const routes = [
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Images /> },
+      { index: true, element: <Images filepath="liveMusic" /> },
       { path: "about", element: <About /> },
       {
         path: "*",

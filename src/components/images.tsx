@@ -54,7 +54,7 @@ export const ImageContext = createContext<ImageContextType>({
   setPlaceholder: () => {},
 });
 
-const Images = () => {
+const Images = (props: { filepath: string }) => {
   const [activeImage, setActiveImage] = useState<ActiveImage | undefined>(
     undefined,
   );
@@ -72,9 +72,18 @@ const Images = () => {
 
   const { isMobile } = useContext(ScrollContext);
 
-  const images: ImageType[] = Object.entries(fileNames).map(
-    ([path, module], index) => {
-      const fileName = path.split("/").pop() || "image";
+  const images: ImageType[] = Object.entries(fileNames)
+    .filter(([path]) =>
+      path.includes(`/public/assets/images/${props.filepath}/`),
+    )
+    .map(([path, module], index) => {
+      const fileName =
+        path
+          .split("/")
+          .pop()
+          ?.replace(/\.(png|jpg|jpeg|svg)$/, "")
+          ?.split("-")[1]
+          ?.replace(/_/g, " ") || "";
 
       return {
         src: module.default,
@@ -88,8 +97,7 @@ const Images = () => {
           setShowGallery(false);
         },
       };
-    },
-  );
+    });
 
   return (
     <ImageContext.Provider

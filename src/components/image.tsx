@@ -16,7 +16,7 @@ type ImageProps = {
 
 export const Image = (props: ImageProps) => {
   const { src, alt, onClick } = props.data;
-  const { activeImage, placeholder } = useContext(ImageContext);
+  const { activeImage, placeholder, showCarousel } = useContext(ImageContext);
 
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -40,15 +40,21 @@ export const Image = (props: ImageProps) => {
   }, [props.index, props.onRectChange, shouldHide]);
 
   return (
-    <motion.img
-      id={props.id}
-      ref={imgRef}
-      src={src}
-      alt={alt}
-      draggable="false"
-      className="p-2 w-full h-auto max-h-full object-contain "
-      style={{ opacity: shouldHide ? 0 : 1 }}
-      onClick={onClick}
-    />
+    <div className="relative w-full h-full flex flex-col items-center">
+      <motion.img
+        id={props.id}
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        draggable="false"
+        className="p-2 w-full h-auto max-h-full object-contain"
+        style={{ opacity: shouldHide ? 0 : 1 }}
+        onClick={onClick}
+      />
+
+      {alt && showCarousel && (
+        <div className="text-center text-sm text-gray-600 mt-2">{alt}</div>
+      )}
+    </div>
   );
 };

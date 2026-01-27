@@ -63,7 +63,7 @@ export const PrevButton: React.FC<PropType> = (props) => {
       {...restProps}
     >
       <svg
-        className="w-6 h-6 text-red-500 dark:text-red-500"
+        className="w-8 h-8 text-red-500 dark:text-red-500"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -96,7 +96,7 @@ export const NextButton: React.FC<PropType> = (props) => {
       {...restProps}
     >
       <svg
-        className="w-6 h-6 text-red-500 dark:text-red-500"
+        className="w-8 h-8 text-red-500 dark:text-red-500"
         aria-hidden="true"
         width="24"
         height="24"
@@ -128,7 +128,7 @@ export const HomeButton = () => {
       }}
     >
       <svg
-        className="w-6 h-6  dark:text-red-500 hover:cursor-pointer"
+        className="w-8 h-8  dark:text-red-500 hover:cursor-pointer"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         width="24"

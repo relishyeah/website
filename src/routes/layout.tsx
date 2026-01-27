@@ -11,6 +11,7 @@ import { QuinnRelyea } from "../components/quinnRelyea";
 import { Sidebar } from "../components/sidebar";
 import { HEADER_HEIGHT_WITH_MARGIN_VH } from "../constants";
 import { Outlet } from "react-router";
+import { ScrollIndicator } from "../components/scrollIndicator";
 
 export function useScrollPosition() {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -47,15 +48,31 @@ export const ScrollContext = createContext({
     b;
   },
   isMobile: false,
+  isVisible: true,
+  setIsVisible: (b: boolean) => {
+    b;
+  },
+  isStartup: true,
+  setIsStartup: (b: boolean) => {
+    b;
+  },
 });
 
 export default function Layout() {
   const scrollPosition = useScrollPosition();
   const [showSidebar, setShowSidebar] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isStartup, setIsStartup] = useState(true);
+
   const isMobile = useIsMobile();
 
   const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsStartup(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -86,6 +103,10 @@ export default function Layout() {
         showSidebar,
         setShowSidebar,
         isMobile,
+        isVisible,
+        setIsVisible,
+        isStartup,
+        setIsStartup,
       }}
     >
       <header
@@ -93,8 +114,9 @@ export default function Layout() {
         style={{ marginTop: 0 }}
       >
         <QuinnRelyea />
-        <Sidebar />
       </header>
+
+      <Sidebar />
       {isVisible && (
         <div ref={ref} className="w-screen h-[166.5vh] bg-gray-100" />
       )}
@@ -107,16 +129,17 @@ export default function Layout() {
         {!isMobile && <div className="w-[25vw] relative" />}
       </div>
       <main className="flex flex-col items-end justify-center w-screen bg-gray-100 ">
-        <div
-          className=" relative min-h-[90vh] bg-gray-100"
-          style={{
-            width: isMobile ? "100vw" : "75vw",
-          }}
-        >
-          <AnimatePresence mode="sync">
+        <AnimatePresence mode="sync">
+          <ScrollIndicator />
+          <div
+            className=" relative min-h-[82vh] bg-gray-100"
+            style={{
+              width: isMobile ? "100vw" : "75vw",
+            }}
+          >
             <Outlet />
-          </AnimatePresence>
-        </div>
+          </div>
+        </AnimatePresence>
       </main>
     </ScrollContext.Provider>
   );
