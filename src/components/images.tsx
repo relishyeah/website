@@ -73,8 +73,6 @@ const Images = (props: { filepath: string }) => {
           if (showCarousel) return;
           const rect = e.currentTarget.getBoundingClientRect();
           setActiveImage({ image: module.default, index, rect, alt });
-          // setPlaceholder(true);
-          // e.currentTarget.style.opacity = "0";
           setShowGallery(false);
           setShowCarousel(true);
         },
