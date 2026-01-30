@@ -15,14 +15,14 @@ export const ScrollIndicator = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 "
+          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-101 "
         >
-          {[0, 1].map((i) => (
+          {[0, 1, 2].map((i) => (
             <motion.svg
               key={i}
-              className="w-8 h-8 text-red-500"
+              className="w-6 h-6 text-red-500 z-101"
               aria-hidden="true"
-              viewBox="0 0 24 24"
+              viewBox="0 0 18 18"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 0] }}
               transition={{
@@ -38,7 +38,7 @@ export const ScrollIndicator = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="m19 9-7 7-7-7"
+                d="m19 7-7 7-7-7"
               />
             </motion.svg>
           ))}

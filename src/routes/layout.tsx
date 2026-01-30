@@ -13,7 +13,9 @@ import { HEADER_HEIGHT_WITH_MARGIN_VH } from "../constants";
 import { Outlet } from "react-router";
 import { ScrollIndicator } from "../components/scrollIndicator";
 
-export function useScrollPosition() {
+export function useScrollPosition(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef(scrollPosition);
   const maxScrollRef = useRef(0);
@@ -21,8 +23,15 @@ export function useScrollPosition() {
   scrollRef.current = scrollPosition;
 
   useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) {
+      console.log("test123 failed");
+      return;
+    }
     const handleScroll = () => {
-      const y = window.scrollY;
+      const y = container.scrollTop;
+      console.log("test123,", y);
+
       if (y > maxScrollRef.current) {
         maxScrollRef.current = y;
         const pos = Math.min(maxScrollRef.current / 1000, 1);
@@ -30,13 +39,13 @@ export function useScrollPosition() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    container.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      container.removeEventListener("scroll", handleScroll);
     };
-  }, []); // still only attach listener once
+  }, []);
 
   return scrollRef.current;
 }
@@ -56,14 +65,17 @@ export const ScrollContext = createContext({
   setIsStartup: (b: boolean) => {
     b;
   },
+  spacerEl: null as HTMLDivElement | null,
 });
 
 export default function Layout() {
-  const scrollPosition = useScrollPosition();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const scrollPosition = useScrollPosition(containerRef);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isStartup, setIsStartup] = useState(true);
-
   const isMobile = useIsMobile();
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -75,24 +87,37 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
-    if (!ref.current) return;
+    const headerEl = headerRef.current;
+    const containerEl = containerRef.current;
+    const spacerEl = spacerRef.current;
+    if (!headerEl || !containerEl || !spacerEl) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            setIsVisible(false);
-            observer.disconnect(); // stop observing
-          }
-        });
-      },
-      { threshold: 0 }, // "0" fires as soon as any pixel is visible / becomes invisible
-    );
+    const handleScroll = () => {
+      spacerEl.scrollIntoView({
+        behavior: "smooth", // or "auto"
+        block: "start", // align to top of viewport
+      });
+      setTimeout(() => {
+        setIsVisible(false);
+        setIsStartup(false);
 
-    observer.observe(ref.current);
+        headerEl.removeEventListener("wheel", handleScroll);
+        headerEl.removeEventListener("touchstart", handleScroll);
+        headerEl.removeEventListener("touchmove", handleScroll);
+      }, 1500); // runs ~150ms later
+    };
+    headerEl.addEventListener("wheel", handleScroll, { passive: false });
 
+    headerEl.addEventListener("touchstart", handleScroll, {
+      passive: false,
+    });
+    headerEl.addEventListener("touchmove", handleScroll, { passive: false });
+
+    // Clean up everything
     return () => {
-      observer.disconnect();
+      headerEl.removeEventListener("wheel", handleScroll);
+      headerEl.removeEventListener("touchstart", handleScroll);
+      headerEl.removeEventListener("touchmove", handleScroll);
     };
   }, []);
 
@@ -107,40 +132,45 @@ export default function Layout() {
         setIsVisible,
         isStartup,
         setIsStartup,
+        spacerEl: spacerRef.current,
       }}
     >
       <header
-        className="h-auto w-[200%] fixed top-0 left-0  leading-20 z-10  bg-gray-100 flex flex-nowrap bg overflow-x-hidden"
+        className="h-auto w-full fixed top-0 left-0  leading-20 z-100  bg-gray-100 flex flex-nowrap bg "
         style={{ marginTop: 0 }}
+        ref={headerRef}
       >
         <QuinnRelyea />
       </header>
 
       <Sidebar />
-      {isVisible && (
-        <div ref={ref} className="w-screen h-[166.5vh] bg-gray-100" />
-      )}
       <div
-        className="w-screen bg-gray-100"
-        style={{ height: `${HEADER_HEIGHT_WITH_MARGIN_VH}vh` }}
-      />
+        className="h-screen overflow-y-scroll scroll-smooth"
+        ref={containerRef}
+      >
+        {isVisible && (
+          <div ref={ref} className="w-full h-[200vh] bg-gray-100 " />
+        )}
+        {/* spacer for header */}
+        <div
+          className="w-full bg-gray-100 "
+          style={{ height: `${HEADER_HEIGHT_WITH_MARGIN_VH}vh` }}
+          ref={spacerRef}
+        />
 
-      <div className="bg-gray-100 w-full h-auto flex  overflow-clip">
-        {!isMobile && <div className="w-[25vw] relative" />}
-      </div>
-      <main className="flex flex-col items-end justify-center w-screen bg-gray-100 ">
-        <AnimatePresence mode="sync">
+        <main className="flex flex-col items-end justify-center w-full bg-gray-100 ">
           <ScrollIndicator />
+          {!isMobile ? <div className="basis-1/4 shrink-0 relative" /> : null}
           <div
-            className=" relative min-h-[82vh] bg-gray-100"
+            className=" relative min-h-[82vh] bg-gray-100 "
             style={{
-              width: isMobile ? "100vw" : "75vw",
+              width: isMobile ? "100%" : "75%",
             }}
           >
             <Outlet />
           </div>
-        </AnimatePresence>
-      </main>
+        </main>
+      </div>
     </ScrollContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
-import { useState, createContext, useEffect, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 import { Masonry } from "masonic";
 import EmblaCarousel from "./carousel/emblaCarousel";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { type ImageType, Image } from "./image";
 import { ANIMATION_DURATION_S } from "../constants";
 import { ScrollContext } from "../routes/layout";
@@ -10,20 +10,11 @@ type ImageModule = {
   default: string; // the URL of the image
 };
 
-export function MasonryClientOnly({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  return mounted ? children : null;
-}
-
 export interface ActiveImage {
   image: string;
   index: number;
   rect: DOMRect;
+  alt: string;
 }
 
 interface ImageContextType {
@@ -35,9 +26,6 @@ interface ImageContextType {
 
   showCarousel: boolean;
   setShowCarousel: (show: boolean) => void;
-
-  placeholder: boolean;
-  setPlaceholder: (placeholder: boolean) => void;
 }
 
 export const ImageContext = createContext<ImageContextType>({
@@ -49,9 +37,6 @@ export const ImageContext = createContext<ImageContextType>({
 
   showCarousel: false,
   setShowCarousel: () => {},
-
-  placeholder: false,
-  setPlaceholder: () => {},
 });
 
 const Images = (props: { filepath: string }) => {
@@ -60,10 +45,6 @@ const Images = (props: { filepath: string }) => {
   );
   const [showCarousel, setShowCarousel] = useState(false);
   const [showGallery, setShowGallery] = useState(true);
-
-  const [placeholder, setPlaceholder] = useState(false);
-
-  const [targetRect, setTargetRect] = useState<DOMRect | undefined>(undefined);
 
   const fileNames: Record<string, ImageModule> = import.meta.glob(
     "/public/assets/images/*/*.{png,jpg,jpeg,svg}",
@@ -77,7 +58,7 @@ const Images = (props: { filepath: string }) => {
       path.includes(`/public/assets/images/${props.filepath}/`),
     )
     .map(([path, module], index) => {
-      const fileName =
+      const alt =
         path
           .split("/")
           .pop()
@@ -87,14 +68,15 @@ const Images = (props: { filepath: string }) => {
 
       return {
         src: module.default,
-        alt: fileName,
+        alt,
         onClick: (e) => {
           if (showCarousel) return;
           const rect = e.currentTarget.getBoundingClientRect();
-          setActiveImage({ image: module.default, index, rect });
-          setPlaceholder(true);
-          e.currentTarget.style.opacity = "0";
+          setActiveImage({ image: module.default, index, rect, alt });
+          // setPlaceholder(true);
+          // e.currentTarget.style.opacity = "0";
           setShowGallery(false);
+          setShowCarousel(true);
         },
       };
     });
@@ -108,88 +90,60 @@ const Images = (props: { filepath: string }) => {
         setShowGallery,
         showCarousel,
         setShowCarousel,
-        placeholder,
-        setPlaceholder,
       }}
     >
-      <div
-        className="embla absolute z-2  pointer-events-none opacity-1 bg-red-400 w-full h-full top-0 left-0"
-        aria-hidden="true"
-      >
-        <div className="embla__viewport ">
-          <div className="embla__container ">
-            <div className="embla__slide ">
-              {activeImage && (
-                <Image
-                  index={-1}
-                  data={{ src: activeImage.image, alt: "" }}
-                  onRectChange={setTargetRect}
-                />
-              )}
+      <AnimatePresence mode="wait">
+        <div
+          className="embla absolute z-2  pointer-events-none opacity-1 w-full h-full top-0 left-0"
+          aria-hidden="true"
+        >
+          <div className="embla__viewport ">
+            <div className="embla__container ">
+              <div className="embla__slide ">
+                {activeImage && (
+                  <Image
+                    index={-1}
+                    data={{ src: activeImage.image, alt: "" }}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {activeImage && placeholder && (
-        <>
-          <motion.img
-            src={activeImage.image}
-            initial={{
-              width: activeImage.rect.width,
-              height: activeImage.rect.height,
-              x: activeImage.rect.x,
-              y: activeImage.rect.y,
-            }}
-            animate={{
-              width: targetRect?.width,
-              height: targetRect?.height,
-              x: targetRect?.x,
-              y: targetRect?.y,
-            }}
+
+        {showCarousel && activeImage && (
+          <motion.div
+            key="carousel"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
             transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-            className="fixed z-5000  object-contain w-full h-auto top-0 left-0 p-2"
-            onAnimationComplete={() => {
-              setShowCarousel(true);
-            }}
-          />
-        </>
-      )}
-      {showCarousel && activeImage && (
-        <motion.div
-          key="carousel"
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "100%", opacity: 0 }}
-          transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-          onAnimationComplete={() => {
-            setPlaceholder(false);
-          }}
-          className="sticky"
-        >
-          <EmblaCarousel
-            slides={images}
-            setIsCarousel={setActiveImage}
-            options={{ startIndex: activeImage.index, loop: true }}
-          />
-        </motion.div>
-      )}
-      {showGallery && (
-        <motion.div
-          key="grid"
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "100%", opacity: 0 }}
-          transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-        >
-          <MasonryClientOnly>
+            className="sticky"
+          >
+            <EmblaCarousel
+              slides={images}
+              setIsCarousel={setActiveImage}
+              options={{ startIndex: activeImage.index, loop: true }}
+            />
+          </motion.div>
+        )}
+        {showGallery && (
+          <motion.div
+            key="grid"
+            className="w-full h-auto "
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+          >
             <Masonry
               items={images}
               render={Image}
               {...(isMobile && { columnCount: 2 })}
             />
-          </MasonryClientOnly>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ImageContext.Provider>
   );
 };

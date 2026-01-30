@@ -45,6 +45,7 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           viewBox="0 0 402.9 29.52"
           preserveAspectRatio="xMidYMid meet"
           style={{ opacity: opacity }}
+          aria-label=" q is the first letter of my name"
         >
           <g
             id="svgGroup"
@@ -68,6 +69,7 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           height="100%"
           viewBox="0 0 402.9 29.52"
           style={{ opacity: opacity }}
+          aria-label="there are ten more"
         >
           <g
             id="svgGroup"
@@ -92,6 +94,7 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           height="100%"
           viewBox="0 0 402.9 29.52"
           style={{ opacity: opacity }}
+          aria-label="this website has all of them"
         >
           <g
             id="svgGroup"
@@ -116,6 +119,7 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           height="100%"
           viewBox="0 0 402.9 29.52"
           style={{ opacity: opacity }}
+          aria-label="as well as some of my work"
         >
           <g
             id="svgGroup"
@@ -142,11 +146,7 @@ export const Bars: React.FC = () => {
   const { scrollPosition, setShowSidebar, showSidebar, isMobile } =
     useContext(ScrollContext);
 
-  const x = getPosition(
-    isMobile ? 60 : 53,
-    isMobile ? 95 : 105,
-    scrollPosition,
-  );
+  const x = getPosition(isMobile ? 20 : 5, isMobile ? 90 : 105, scrollPosition);
   const y = getPosition(72, 22, scrollPosition);
 
   return (

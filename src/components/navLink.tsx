@@ -9,7 +9,7 @@ type Props = {
 };
 
 const NavLink = ({ to, children }: Props) => {
-  const { scrollPosition, isMobile, setShowSidebar } =
+  const { scrollPosition, isMobile, setShowSidebar, spacerEl, setIsVisible } =
     useContext(ScrollContext);
 
   const isScrolled = scrollPosition > 0.5;
@@ -19,7 +19,10 @@ const NavLink = ({ to, children }: Props) => {
       setShowSidebar(false);
     }
     if (!isScrolled) {
-      window.scrollTo({ top: 1100, behavior: "smooth" });
+      spacerEl?.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 1500);
     }
   };
   return (

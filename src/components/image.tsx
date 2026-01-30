@@ -12,6 +12,11 @@ type ImageProps = {
   data: ImageType;
   id?: string;
   onRectChange?: (rect: DOMRect, index: number) => void;
+  initial?: any;
+  animate?: any;
+  transition?: any;
+  onAnimationComplete?: () => void;
+  isPlaceholder?: boolean;
 };
 
 export const Image = (props: ImageProps) => {
@@ -47,9 +52,13 @@ export const Image = (props: ImageProps) => {
         src={src}
         alt={alt}
         draggable="false"
-        className="p-2 w-full h-auto max-h-full object-contain"
+        className={`p-2 w-full h-auto max-h-full object-contain ${props.isPlaceholder ? "fixed z-5 pointer-events-none top-0 left-0 p-2" : ""}`}
         style={{ opacity: shouldHide ? 0 : 1 }}
         onClick={onClick}
+        initial={props.initial}
+        animate={props.animate}
+        transition={props.transition}
+        onAnimationComplete={props.onAnimationComplete}
       />
 
       {alt && showCarousel && (

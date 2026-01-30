@@ -1,4 +1,4 @@
-import { useContext} from "react";
+import { useContext } from "react";
 import { motion } from "motion/react";
 import { ScrollContext } from "../routes/layout";
 import { HEADER_HEIGHT_WITH_MARGIN_VH } from "../constants";
@@ -9,8 +9,8 @@ export const Sidebar = () => {
   const shouldShow = (isMobile && showSidebar) || (!isMobile && !isStartup);
 
   return (
-    <motion.div
-      className="fixed z-102 bg-gray-100 left-0 top-0 h-full w-full md:w-[25vw] md:translate-x-0 pl-6 pt-8"
+    <motion.aside
+      className="fixed z-102 bg-gray-100 left-0 top-0 h-full w-full md:w-[25%] md:translate-x-0 pl-6 pt-8"
       initial={{ x: "-100%" }}
       animate={{
         x: shouldShow ? "0%" : "-100%",
@@ -33,6 +33,6 @@ export const Sidebar = () => {
           <NavLink to="/about">about</NavLink>
         </li>
       </ul>
-    </motion.div>
+    </motion.aside>
   );
 };
