@@ -16,33 +16,13 @@ type ImageProps = {
   animate?: any;
   transition?: any;
   onAnimationComplete?: () => void;
-  isPlaceholder?: boolean;
 };
 
 export const Image = (props: ImageProps) => {
   const { src, alt, onClick } = props.data;
-  const { activeImage, placeholder, showCarousel } = useContext(ImageContext);
+  const { showCarousel } = useContext(ImageContext);
 
   const imgRef = useRef<HTMLImageElement | null>(null);
-
-  const shouldHide = activeImage?.index === props.index && placeholder;
-
-  useEffect(() => {
-    if (!imgRef.current) return;
-
-    const updateRect = () => {
-      const rect = imgRef.current!.getBoundingClientRect();
-      // Use rect here or bubble up
-      if (props.onRectChange) {
-        props.onRectChange(rect, props.index);
-      }
-    };
-
-    updateRect();
-
-    window.addEventListener("resize", updateRect);
-    return () => window.removeEventListener("resize", updateRect);
-  }, [props.index, props.onRectChange, shouldHide]);
 
   return (
     <div className="relative w-full h-full flex flex-col items-center">
@@ -52,8 +32,7 @@ export const Image = (props: ImageProps) => {
         src={src}
         alt={alt}
         draggable="false"
-        className={`p-2 w-full h-auto max-h-full object-contain ${props.isPlaceholder ? "fixed z-5 pointer-events-none top-0 left-0 p-2" : ""}`}
-        style={{ opacity: shouldHide ? 0 : 1 }}
+        className={`p-2 w-full h-auto max-h-full object-contain `}
         onClick={onClick}
         initial={props.initial}
         animate={props.animate}
