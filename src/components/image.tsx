@@ -1,5 +1,4 @@
-import { useContext, useRef } from "react";
-import { ImageContext } from "./images";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 
 export type ImageType = {

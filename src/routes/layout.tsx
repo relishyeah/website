@@ -75,8 +75,6 @@ export default function Layout() {
   const [isStartup, setIsStartup] = useState(true);
   const isMobile = useIsMobile();
 
-  const ref = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     setTimeout(() => {
       setIsStartup(false);
