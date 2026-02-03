@@ -10,6 +10,7 @@ const routes = [
     element: <Layout />,
     children: [
       { index: true, element: <Images filepath="liveMusic" /> },
+      { path: "motion", element: <Images filepath="motion" /> },
       { path: "about", element: <About /> },
       {
         path: "*",

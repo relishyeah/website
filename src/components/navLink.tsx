@@ -9,21 +9,14 @@ type Props = {
 };
 
 const NavLink = ({ to, children }: Props) => {
-  const { scrollPosition, isMobile, setShowSidebar, spacerEl, setIsVisible } =
+  const { isMobile, setShowSidebar, spacerEl, setIsVisible, isVisible } =
     useContext(ScrollContext);
-
-  const isScrolled = scrollPosition > 0.5;
 
   const onClickLink = () => {
     if (isMobile) {
       setShowSidebar(false);
     }
-    if (!isScrolled) {
-      spacerEl?.scrollIntoView({ behavior: "smooth" });
-      setTimeout(() => {
-        setIsVisible(false);
-      }, 1500);
-    }
+    setIsVisible(false);
   };
   return (
     <_NavLink
@@ -31,7 +24,7 @@ const NavLink = ({ to, children }: Props) => {
       onClick={onClickLink}
       className={({ isActive }) =>
         `text-2xl font-medium relative ${
-          isActive && isScrolled
+          isActive && !isVisible
             ? "text-black"
             : "text-red-500 hover:text-black"
         }`
@@ -40,7 +33,7 @@ const NavLink = ({ to, children }: Props) => {
       {({ isActive }: { isActive: boolean }) => (
         <div className="flex items-center space-x-1">
           {children}
-          {isActive && isScrolled && <Finger />}
+          {isActive && !isVisible && <Finger />}
         </div>
       )}
     </_NavLink>

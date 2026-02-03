@@ -24,12 +24,10 @@ export function useScrollPosition(
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) {
-      console.log("test123 failed");
       return;
     }
     const handleScroll = () => {
       const y = container.scrollTop;
-      console.log("test123,", y);
 
       if (y > maxScrollRef.current) {
         maxScrollRef.current = y;
@@ -92,18 +90,16 @@ export default function Layout() {
     if (!headerEl || !containerEl || !spacerEl) return;
 
     const handleScroll = () => {
-      spacerEl.scrollIntoView({
-        behavior: "smooth", // or "auto"
-        block: "start", // align to top of viewport
-      });
-      setTimeout(() => {
-        setIsVisible(false);
-        setIsStartup(false);
+      // spacerEl.scrollIntoView({
+      //   behavior: "smooth", // or "auto"
+      //   block: "start", // align to top of viewport
+      // });
+      setIsVisible(false);
+      setIsStartup(false);
 
-        headerEl.removeEventListener("wheel", handleScroll);
-        headerEl.removeEventListener("touchstart", handleScroll);
-        headerEl.removeEventListener("touchmove", handleScroll);
-      }, 1500); // runs ~150ms later
+      headerEl.removeEventListener("wheel", handleScroll);
+      headerEl.removeEventListener("touchstart", handleScroll);
+      headerEl.removeEventListener("touchmove", handleScroll);
     };
     headerEl.addEventListener("wheel", handleScroll, { passive: false });
 
@@ -144,16 +140,18 @@ export default function Layout() {
 
       <Sidebar />
       <div
-        className="h-screen overflow-y-scroll scroll-smooth"
+        className="h-screen overflow-y-scroll scroll-smooth "
         ref={containerRef}
       >
-        {isVisible && (
-          <div ref={ref} className="w-full h-[200vh] bg-gray-100 " />
-        )}
-        {/* spacer for header */}
         <div
-          className="w-full bg-gray-100 "
-          style={{ height: `${HEADER_HEIGHT_WITH_MARGIN_VH}vh` }}
+          className="w-full bg-gray-100 h"
+          style={{
+            height: "100vh",
+            maxHeight: isVisible
+              ? "100vh"
+              : `${HEADER_HEIGHT_WITH_MARGIN_VH}vh`,
+            transition: "max-height 0.6s ease-in-out",
+          }}
           ref={spacerRef}
         />
 

@@ -1,27 +1,27 @@
 import { Bars } from "./carousel/bar";
 import { useContext } from "react";
-import { getPosition } from "../utils/utils";
 import { ScrollContext } from "../routes/layout";
 import { HEADER_HEIGHT_VH } from "../constants";
 
 export const QuinnRelyea = () => {
-  const { scrollPosition, isMobile } = useContext(ScrollContext);
+  const { isVisible, isMobile } = useContext(ScrollContext);
 
   return (
     <>
       <svg
-        width={`${getPosition(100, 20, scrollPosition)}vw`}
-        height={`${getPosition(100, HEADER_HEIGHT_VH, scrollPosition)}vh`}
+        width={isVisible ? "100vw" : "20vw"}
+        height={isVisible ? "100vh" : `${HEADER_HEIGHT_VH}vh`}
         viewBox="0 0 420 800"
         style={{
+          transition: "all 0.56s ease-in-out",
           maxWidth: "105vw",
-          minWidth: `${getPosition(100, 15, scrollPosition)}vw`,
+          minWidth: isVisible ? "100vw" : "15vw",
           maxHeight: "100vh",
-          marginTop: `${getPosition(0, 1.5, scrollPosition)}vh`,
-          marginLeft: `${getPosition(0, isMobile ? 0 : -17, scrollPosition)}vw`,
-          paddingBottom: `${getPosition(0, 1.5, scrollPosition)}vh`,
+          marginTop: isVisible ? "0vh" : "1.5vh",
+          marginLeft: isVisible ? "0vw" : isMobile ? 0 : "-17vw",
+          paddingBottom: isVisible ? "0vh" : "1.5vh",
         }}
-        className="bg-gray-100 "
+        className="bg-gray-100"
         preserveAspectRatio="xMaxYMin meet"
       >
         <g
@@ -33,7 +33,9 @@ export const QuinnRelyea = () => {
           fill="#ff0000"
           style={{
             stroke: "#ff0000",
-            strokeWidth: `${getPosition(7, 6, scrollPosition)}mm`,
+            strokeWidth: isVisible ? "7mm" : "6mm",
+            transition: "all 0.56s ease-in-out",
+
             fill: "#ff0000",
           }}
         >
@@ -46,11 +48,12 @@ export const QuinnRelyea = () => {
       {/* uinn relyea */}
       <svg
         width={"70%"}
-        height={`${getPosition(100, 7.5, scrollPosition)}vh`}
+        height={isVisible ? "100vh" : "7.5vh"}
         viewBox="-60 00 5000 1000"
         style={{
           maxWidth: "105vw",
           maxHeight: "100vh",
+          transition: "all 0.56s ease-in-out",
         }}
         className=" shrink-0 min-w-0"
         preserveAspectRatio="xMinYMid meet"

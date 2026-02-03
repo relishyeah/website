@@ -4,19 +4,28 @@ import {
   faInstagram,
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
+import { ANIMATION_DURATION_S } from "../constants";
+import { motion } from "motion/react";
 
 const imgMe = new URL("../assets/images/me.jpeg", import.meta.url).href;
 
 export default function About() {
   return (
-    <div className="p-4 text-red-500">
+    <motion.div
+      key={crypto.randomUUID()}
+      className="w-full h-auto p-4 text-red-500"
+      initial={{ y: "100%", opacity: 0 }}
+      animate={{ y: "0%", opacity: 1 }}
+      exit={{ y: "100%", opacity: 0 }}
+      transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+    >
       <div className="flex justify-center items-center space-x-4 mb-6">
         <img src={imgMe} alt="Picture of me2" className="w-auto h-[32vh]" />
 
         <div className="flex flex-col justify-center items-start text-2xl space-y-1 font-medium">
           <span>web dev</span>
           <span>photographer</span>
-          <span>bike enjoyer</span> 
+          <span>bike enjoyer</span>
         </div>
       </div>
 
@@ -73,6 +82,6 @@ export default function About() {
           </a>
         </li>
       </ul>
-    </div>
+    </motion.div>
   );
 }

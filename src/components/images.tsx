@@ -90,25 +90,7 @@ const Images = (props: { filepath: string }) => {
         setShowCarousel,
       }}
     >
-      <AnimatePresence mode="wait">
-        <div
-          className="embla absolute z-2  pointer-events-none opacity-1 w-full h-full top-0 left-0"
-          aria-hidden="true"
-        >
-          <div className="embla__viewport ">
-            <div className="embla__container ">
-              <div className="embla__slide ">
-                {activeImage && (
-                  <Image
-                    index={-1}
-                    data={{ src: activeImage.image, alt: "" }}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <AnimatePresence mode="wait" initial={false}>
         {showCarousel && activeImage && (
           <motion.div
             key="carousel"
@@ -120,6 +102,7 @@ const Images = (props: { filepath: string }) => {
           >
             <EmblaCarousel
               slides={images}
+              keyPrefix={props.filepath}
               setIsCarousel={setActiveImage}
               options={{ startIndex: activeImage.index, loop: true }}
             />
@@ -127,7 +110,7 @@ const Images = (props: { filepath: string }) => {
         )}
         {showGallery && (
           <motion.div
-            key="grid"
+            key={"gird" + props.filepath}
             className="w-full h-auto "
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
@@ -135,6 +118,7 @@ const Images = (props: { filepath: string }) => {
             transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
           >
             <Masonry
+              key={"gird" + props.filepath}
               items={images}
               render={Image}
               {...(isMobile && { columnCount: 2 })}

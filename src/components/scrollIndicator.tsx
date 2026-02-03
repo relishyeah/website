@@ -3,12 +3,11 @@ import { ScrollContext } from "../routes/layout";
 import { AnimatePresence, motion } from "motion/react";
 
 export const ScrollIndicator = () => {
-  const { isStartup, isMobile, scrollPosition } = useContext(ScrollContext);
-  const isScrolling = scrollPosition > 0.4;
+  const { isStartup, isMobile, isVisible } = useContext(ScrollContext);
 
   return (
     <AnimatePresence>
-      {!isStartup && isMobile && !isScrolling && (
+      {!isStartup && isMobile && isVisible && (
         <motion.div
           key="scrollIndicator"
           initial={{ opacity: 0, y: 8 }}

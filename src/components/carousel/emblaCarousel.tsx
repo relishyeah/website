@@ -14,6 +14,7 @@ type PropType = {
   slides: ImageType[];
   options?: EmblaOptionsType;
   setIsCarousel: (activeImage: ActiveImage | undefined) => void;
+  keyPrefix?: string;
 };
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
@@ -32,9 +33,15 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       <div className="embla__viewport " ref={emblaRef} tabIndex={0}>
         <div className="embla__container ">
           {slides.map((image, index) => (
-            <div className="embla__slide" key={index}>
-              <Image index={index} data={image} id={`slide-${index}`} />
-            </div>
+            <>
+              <div
+                className="embla__slide"
+                key={props.keyPrefix ? `${props.keyPrefix}-${index}` : index}
+              >
+                <Image index={index} data={image} id={`slide-${index}`} />
+                <div className="caption">{image.alt}</div>
+              </div>
+            </>
           ))}
         </div>
       </div>

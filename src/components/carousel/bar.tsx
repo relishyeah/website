@@ -1,15 +1,14 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ScrollContext } from "../../routes/layout";
-import { getPosition } from "../../utils/utils";
 
 type BarProps = {
   line: number;
+  shouldMove: boolean;
 };
 
-const Bar: React.FC<BarProps> = ({ line }) => {
-  const { scrollPosition, showSidebar, isMobile } = useContext(ScrollContext);
+const Bar: React.FC<BarProps> = ({ line, shouldMove }) => {
+  const { showSidebar, isMobile, isVisible } = useContext(ScrollContext);
 
-  const opacity = 1 - 2 * scrollPosition;
   const shouldDisappear = (line === 2 || line === 3) && showSidebar;
   const shouldRotateClockwise = line === 1 && showSidebar;
   const shouldRotateAntiClockwise = line === 4 && showSidebar;
@@ -18,17 +17,18 @@ const Bar: React.FC<BarProps> = ({ line }) => {
     <div
       className=" text-black z-103  items-end  rounded-lg height-auto relative"
       style={{
-        height: `${getPosition(2, 0.2, scrollPosition)}rem`,
-        width: `${getPosition(isMobile ? 18 : 26, 1.6, scrollPosition)}rem`,
-        margin: `${getPosition(0.125, 0.1, scrollPosition)}rem `,
+        height: `${isVisible ? 2 : 0.2}rem`,
+        width: `${isVisible ? (isMobile ? 18 : 26) : 1.6}rem`,
+        margin: `${isVisible ? 0.125 : 0.1}rem `,
+        transition: shouldMove ? "all 0.6s ease-in-out" : "",
       }}
     >
       <div
         className="w-full h-full  absolute bottom-[2%] top-[2%] "
         style={{
-          opacity: shouldDisappear ? 0 : 0 + 3 * scrollPosition,
+          opacity: shouldDisappear || isVisible ? 0 : 1,
           backgroundColor: shouldDisappear ? "#f3f4f6" : "#fb2c36",
-          transition: "all 0.3s ease-in-out",
+          transition: shouldMove ? "all 0.3s ease-in-out" : "",
           zIndex: line === 1 || line === 4 ? 200 : 100,
           transformOrigin: "center center",
           transform: shouldRotateClockwise
@@ -44,8 +44,11 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           height="100%"
           viewBox="0 0 402.9 29.52"
           preserveAspectRatio="xMidYMid meet"
-          style={{ opacity: opacity }}
-          aria-label=" q is the first letter of my name"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "all 0.5s ease-in-out",
+          }}
+          aria-label="q is the first letter of my name"
         >
           <g
             id="svgGroup"
@@ -68,7 +71,10 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           width="100%"
           height="100%"
           viewBox="0 0 402.9 29.52"
-          style={{ opacity: opacity }}
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "all 0.5s ease-in-out",
+          }}
           aria-label="there are ten more"
         >
           <g
@@ -93,7 +99,10 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           width="100%"
           height="100%"
           viewBox="0 0 402.9 29.52"
-          style={{ opacity: opacity }}
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "all 0.5s ease-in-out",
+          }}
           aria-label="this website has all of them"
         >
           <g
@@ -118,7 +127,10 @@ const Bar: React.FC<BarProps> = ({ line }) => {
           width="100%"
           height="100%"
           viewBox="0 0 402.9 29.52"
-          style={{ opacity: opacity }}
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "all 0.5s ease-in-out",
+          }}
           aria-label="as well as some of my work"
         >
           <g
@@ -143,27 +155,32 @@ const Bar: React.FC<BarProps> = ({ line }) => {
 };
 
 export const Bars: React.FC = () => {
-  const { scrollPosition, setShowSidebar, showSidebar, isMobile } =
+  const { setShowSidebar, showSidebar, isMobile, isVisible } =
     useContext(ScrollContext);
+  const [shouldMove, setSHouldMove] = useState(false);
 
-  const x = getPosition(isMobile ? 20 : 5, isMobile ? 90 : 105, scrollPosition);
-  const y = getPosition(72, 22, scrollPosition);
+  useEffect(() => {
+    setTimeout(() => {
+      setSHouldMove(true);
+    }, 100);
+  }, []);
 
   return (
     <div
       className="absolute w-auto h-auto z-101  hover:cursor-pointer flex flex-col justify-center items-center  before:absolute before:-inset-3 before:content-[''] "
       style={{
-        right: `${x}%`,
-        top: `${y}%`,
+        right: `${isVisible ? (isMobile ? 20 : 5) : isMobile ? 90 : 105}%`,
+        top: `${isVisible ? 72 : 22}%`,
+        transition: shouldMove ? "all 0.6s ease-in-out" : "",
       }}
       onClick={() => {
         setShowSidebar(!showSidebar);
       }}
     >
-      <Bar line={1} />
-      <Bar line={2} />
-      <Bar line={3} />
-      <Bar line={4} />
+      <Bar line={1} shouldMove={shouldMove} />
+      <Bar line={2} shouldMove={shouldMove} />
+      <Bar line={3} shouldMove={shouldMove} />
+      <Bar line={4} shouldMove={shouldMove} />
     </div>
   );
 };
