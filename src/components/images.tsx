@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { Masonry } from "masonic";
 import EmblaCarousel from "./carousel/emblaCarousel";
 import { AnimatePresence, motion } from "motion/react";
@@ -52,6 +52,11 @@ const Images = (props: { filepath: string }) => {
   );
 
   const { isMobile } = useContext(ScrollContext);
+
+  useEffect(() => {
+    setShowCarousel(false);
+    setShowGallery(true);
+  }, [props.filepath]);
 
   const images: ImageType[] = Object.entries(fileNames)
     .filter(([path]) =>
