@@ -1,54 +1,14 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  createContext,
-  useLayoutEffect,
-} from "react";
+import { useEffect, useRef, useState, createContext } from "react";
 import { useIsMobile } from "../utils/mobileHooks";
 import { QuinnRelyea } from "../components/quinnRelyea";
 import { Sidebar } from "../components/sidebar";
 import { HEADER_HEIGHT_WITH_MARGIN_VH } from "../constants";
-import { Outlet } from "react-router";
+import { useLocation, useOutlet } from "react-router";
 import { ScrollIndicator } from "../components/scrollIndicator";
-
-export function useScrollPosition(
-  containerRef: React.RefObject<HTMLDivElement | null>,
-) {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const scrollRef = useRef(scrollPosition);
-  const maxScrollRef = useRef(0);
-
-  scrollRef.current = scrollPosition;
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) {
-      return;
-    }
-    const handleScroll = () => {
-      const y = container.scrollTop;
-
-      if (y > maxScrollRef.current) {
-        maxScrollRef.current = y;
-        const pos = Math.min(maxScrollRef.current / 1000, 1);
-        setScrollPosition(pos);
-      }
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  return scrollRef.current;
-}
+import { AnimatePresence } from "motion/react";
+import React from "react";
 
 export const ScrollContext = createContext({
-  scrollPosition: 0,
   showSidebar: false,
   setShowSidebar: (b: boolean) => {
     b;
@@ -69,11 +29,14 @@ export default function Layout() {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
-  const scrollPosition = useScrollPosition(containerRef);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isStartup, setIsStartup] = useState(true);
   const isMobile = useIsMobile();
+  const outlet = useOutlet();
+  const location = useLocation();
+  const isImagesRoute =
+    location.pathname === "/" || location.pathname.startsWith("/motion");
 
   useEffect(() => {
     setTimeout(() => {
@@ -117,7 +80,6 @@ export default function Layout() {
   return (
     <ScrollContext.Provider
       value={{
-        scrollPosition,
         showSidebar,
         setShowSidebar,
         isMobile,
@@ -162,7 +124,12 @@ export default function Layout() {
               width: isMobile ? "100%" : "75%",
             }}
           >
-            <Outlet />
+            <AnimatePresence mode="wait" initial={true}>
+              {outlet &&
+                React.cloneElement(outlet, {
+                  key: isImagesRoute ? "images" : location.pathname,
+                })}
+            </AnimatePresence>
           </div>
         </main>
       </div>

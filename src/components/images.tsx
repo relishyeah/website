@@ -13,7 +13,6 @@ type ImageModule = {
 export interface ActiveImage {
   image: string;
   index: number;
-  rect: DOMRect;
   alt: string;
 }
 
@@ -58,6 +57,18 @@ const Images = (props: { filepath: string }) => {
     setShowGallery(true);
   }, [props.filepath]);
 
+  useEffect(() => {
+    const urls = Object.values(fileNames).map((mod) => (mod as any).default);
+
+    urls.forEach((href) => {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.as = "image";
+      link.href = href;
+      document.head.appendChild(link);
+    });
+  }, []);
+
   const images: ImageType[] = Object.entries(fileNames)
     .filter(([path]) =>
       path.includes(`/public/assets/images/${props.filepath}/`),
@@ -74,10 +85,9 @@ const Images = (props: { filepath: string }) => {
       return {
         src: module.default,
         alt,
-        onClick: (e) => {
+        onClick: () => {
           if (showCarousel) return;
-          const rect = e.currentTarget.getBoundingClientRect();
-          setActiveImage({ image: module.default, index, rect, alt });
+          setActiveImage({ image: module.default, index, alt });
           setShowGallery(false);
           setShowCarousel(true);
         },
@@ -95,42 +105,53 @@ const Images = (props: { filepath: string }) => {
         setShowCarousel,
       }}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {showCarousel && activeImage && (
-          <motion.div
-            key="carousel"
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: "0%", opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-            className="sticky"
-          >
-            <EmblaCarousel
-              slides={images}
-              keyPrefix={props.filepath}
-              setIsCarousel={setActiveImage}
-              options={{ startIndex: activeImage.index, loop: true }}
-            />
-          </motion.div>
-        )}
-        {showGallery && (
-          <motion.div
-            key={"gird" + props.filepath}
-            className="w-full h-auto "
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: "0%", opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-          >
-            <Masonry
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: ANIMATION_DURATION_S, ease: "easeOut" }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {showCarousel && activeImage && (
+            <motion.div
+              key="carousel"
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+              className="sticky"
+            >
+              <EmblaCarousel
+                slides={images}
+                keyPrefix={props.filepath}
+                setIsCarousel={setActiveImage}
+                options={{ startIndex: activeImage.index, loop: true }}
+              />
+            </motion.div>
+          )}
+          {showGallery && (
+            <motion.div
               key={"gird" + props.filepath}
-              items={images}
-              render={Image}
-              {...(isMobile && { columnCount: 2 })}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+              className="w-full h-auto relative"
+              initial={{ opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+            >
+              <Masonry
+                key={
+                  "grid" + props.filepath + (isMobile ? "mobile" : "desktop")
+                }
+                items={images}
+                render={Image}
+                style={{
+                  position: "relative",
+                }}
+                {...(isMobile && { columnCount: 2 })}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </ImageContext.Provider>
   );
 };

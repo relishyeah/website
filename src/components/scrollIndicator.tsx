@@ -14,7 +14,7 @@ export const ScrollIndicator = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-101 "
+          className="fixed bottom-0 left-1/2 -translate-x-1/2 z-101 "
         >
           {[0, 1, 2].map((i) => (
             <motion.svg

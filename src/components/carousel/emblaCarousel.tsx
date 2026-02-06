@@ -33,15 +33,18 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       <div className="embla__viewport " ref={emblaRef} tabIndex={0}>
         <div className="embla__container ">
           {slides.map((image, index) => (
-            <>
-              <div
-                className="embla__slide"
-                key={props.keyPrefix ? `${props.keyPrefix}-${index}` : index}
-              >
-                <Image index={index} data={image} id={`slide-${index}`} />
-                <div className="caption">{image.alt}</div>
-              </div>
-            </>
+            <div
+              className="embla__slide"
+              key={props.keyPrefix ? `${props.keyPrefix}-${index}` : index}
+            >
+              <Image
+                index={index}
+                data={image}
+                id={`slide-${index}`}
+                isCarousel
+              />
+              <div className="caption">{image.alt}</div>
+            </div>
           ))}
         </div>
       </div>

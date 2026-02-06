@@ -157,17 +157,17 @@ const Bar: React.FC<BarProps> = ({ line, shouldMove }) => {
 export const Bars: React.FC = () => {
   const { setShowSidebar, showSidebar, isMobile, isVisible } =
     useContext(ScrollContext);
-  const [shouldMove, setSHouldMove] = useState(false);
+  const [shouldMove, setShouldMove] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
-      setSHouldMove(true);
+      setShouldMove(true);
     }, 100);
   }, []);
 
   return (
-    <div
-      className="absolute w-auto h-auto z-101  hover:cursor-pointer flex flex-col justify-center items-center  before:absolute before:-inset-3 before:content-[''] "
+    <button
+      className="absolute w-auto h-auto z-101  hover:cursor-pointer flex flex-col justify-center items-center  before:absolute before:-inset-3 before:content-['']  "
       style={{
         right: `${isVisible ? (isMobile ? 20 : 5) : isMobile ? 90 : 105}%`,
         top: `${isVisible ? 72 : 22}%`,
@@ -181,6 +181,6 @@ export const Bars: React.FC = () => {
       <Bar line={2} shouldMove={shouldMove} />
       <Bar line={3} shouldMove={shouldMove} />
       <Bar line={4} shouldMove={shouldMove} />
-    </div>
+    </button>
   );
 };

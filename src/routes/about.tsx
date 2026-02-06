@@ -12,9 +12,9 @@ const imgMe = new URL("../assets/images/me.jpeg", import.meta.url).href;
 export default function About() {
   return (
     <motion.div
-      key={crypto.randomUUID()}
+      key="about"
       className="w-full h-auto p-4 text-red-500"
-      initial={{ y: "100%", opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{ y: "0%", opacity: 1 }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
