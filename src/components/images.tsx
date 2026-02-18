@@ -1,8 +1,8 @@
-import { useState, createContext, useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { Masonry } from "masonic";
 import EmblaCarousel from "./carousel/emblaCarousel";
 import { AnimatePresence, motion } from "motion/react";
-import { type ImageType, Image } from "./image";
+import { type ImageType, _Image as Image } from "./image";
 import { ANIMATION_DURATION_S } from "../constants";
 import { ScrollContext } from "../routes/layout";
 
@@ -10,49 +10,38 @@ type ImageModule = {
   default: string; // the URL of the image
 };
 
-export interface ActiveImage {
-  image: string;
-  index: number;
-  alt: string;
-}
+const Images = (props: { filepath: "liveMusic" | "motion" }) => {
+  const galleries = {
+    liveMusic: import.meta.glob(
+      "/src/assets/images/liveMusic/*.{png,jpg,jpeg,svg}",
+      { eager: true },
+    ),
+    motion: import.meta.glob("/src/assets/images/motion/*.{png,jpg,jpeg,svg}", {
+      eager: true,
+    }),
+  };
 
-interface ImageContextType {
-  activeImage: ActiveImage | undefined;
-  setActiveImage: (img: ActiveImage | undefined) => void;
+  const fileNames = galleries[props.filepath] as Record<string, ImageModule>;
 
-  showGallery: boolean;
-  setShowGallery: (show: boolean) => void;
+  const {
+    isMobile,
+    activeImage,
+    setActiveImage,
+    showGallery,
+    setShowGallery,
+    showCarousel,
+    setShowCarousel,
+  } = useContext(ScrollContext);
 
-  showCarousel: boolean;
-  setShowCarousel: (show: boolean) => void;
-}
-
-export const ImageContext = createContext<ImageContextType>({
-  activeImage: undefined,
-  setActiveImage: () => {},
-
-  showGallery: true,
-  setShowGallery: () => {},
-
-  showCarousel: false,
-  setShowCarousel: () => {},
-});
-
-const Images = (props: { filepath: string }) => {
-  const [activeImage, setActiveImage] = useState<ActiveImage | undefined>(
-    undefined,
-  );
-  const [showCarousel, setShowCarousel] = useState(false);
-  const [showGallery, setShowGallery] = useState(true);
-
-  const fileNames: Record<string, ImageModule> = import.meta.glob(
-    "/public/assets/images/*/*.{png,jpg,jpeg,svg}",
-    { eager: true },
-  );
-
-  const { isMobile } = useContext(ScrollContext);
+  const path = useRef<null | "liveMusic" | "motion">(null);
 
   useEffect(() => {
+    if (!path.current) {
+      path.current = props.filepath;
+      return;
+    }
+    if (path.current === props.filepath) return;
+
     setShowCarousel(false);
     setShowGallery(true);
   }, [props.filepath]);
@@ -69,18 +58,13 @@ const Images = (props: { filepath: string }) => {
     });
   }, []);
 
-  const images: ImageType[] = Object.entries(fileNames)
-    .filter(([path]) =>
-      path.includes(`/public/assets/images/${props.filepath}/`),
-    )
-    .map(([path, module], index) => {
-      const alt =
-        path
-          .split("/")
-          .pop()
-          ?.replace(/\.(png|jpg|jpeg|svg)$/, "")
-          ?.split("-")[1]
-          ?.replace(/_/g, " ") || "";
+  const images: ImageType[] = Object.entries(fileNames).map(
+    ([path, module], index) => {
+      const filename = path.split("/").pop() || "";
+
+      const match = filename.match(/^(\d+)-([^-]+)\.(png|jpg|jpeg|svg)$/i);
+
+      const alt = match ? match[2].replace(/_/g, " ") : "idiot fuckong loser";
 
       return {
         src: module.default,
@@ -92,67 +76,55 @@ const Images = (props: { filepath: string }) => {
           setShowCarousel(true);
         },
       };
-    });
+    },
+  );
 
   return (
-    <ImageContext.Provider
-      value={{
-        activeImage,
-        setActiveImage,
-        showGallery,
-        setShowGallery,
-        showCarousel,
-        setShowCarousel,
-      }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: ANIMATION_DURATION_S, ease: "easeOut" }}
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: ANIMATION_DURATION_S, ease: "easeOut" }}
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          {showCarousel && activeImage && (
-            <motion.div
-              key="carousel"
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              exit={{ y: "100%", opacity: 0 }}
-              transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-              className="sticky"
-            >
-              <EmblaCarousel
-                slides={images}
-                keyPrefix={props.filepath}
-                setIsCarousel={setActiveImage}
-                options={{ startIndex: activeImage.index, loop: true }}
-              />
-            </motion.div>
-          )}
-          {showGallery && (
-            <motion.div
-              key={"gird" + props.filepath}
-              className="w-full h-auto relative"
-              initial={{ opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              exit={{ y: "100%", opacity: 0 }}
-              transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
-            >
-              <Masonry
-                key={
-                  "grid" + props.filepath + (isMobile ? "mobile" : "desktop")
-                }
-                items={images}
-                render={Image}
-                style={{
-                  position: "relative",
-                }}
-                {...(isMobile && { columnCount: 2 })}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </ImageContext.Provider>
+      <AnimatePresence mode="wait" initial={true}>
+        {showCarousel && activeImage && (
+          <motion.div
+            key="carousel"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+            className="sticky"
+          >
+            <EmblaCarousel
+              slides={images}
+              keyPrefix={props.filepath}
+              setIsCarousel={setActiveImage}
+              options={{ startIndex: activeImage.index, loop: true }}
+            />
+          </motion.div>
+        )}
+        {showGallery && (
+          <motion.div
+            key={"gird" + props.filepath}
+            className="w-full h-auto relative"
+            initial={{ opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
+          >
+            <Masonry
+              key={"grid" + props.filepath + (isMobile ? "mobile" : "desktop")}
+              items={images}
+              render={Image}
+              style={{
+                position: "relative",
+              }}
+              {...(isMobile && { columnCount: 2 })}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

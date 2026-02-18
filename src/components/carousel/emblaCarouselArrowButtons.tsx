@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { type EmblaCarouselType } from "embla-carousel";
-import { ImageContext } from "../images";
+import { ScrollContext } from "../../routes/layout";
 
 type UsePrevNextButtonsType = {
   prevBtnDisabled: boolean;
@@ -118,7 +118,7 @@ export const NextButton: React.FC<PropType> = (props) => {
 };
 
 export const HomeButton = () => {
-  const { setShowCarousel, setShowGallery } = useContext(ImageContext);
+  const { setShowCarousel, setShowGallery } = useContext(ScrollContext);
   return (
     <button
       className="embla__button"

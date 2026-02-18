@@ -5,8 +5,14 @@ import { Sidebar } from "../components/sidebar";
 import { HEADER_HEIGHT_WITH_MARGIN_VH } from "../constants";
 import { useLocation, useOutlet } from "react-router";
 import { ScrollIndicator } from "../components/scrollIndicator";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import React from "react";
+
+export interface ActiveImage {
+  image: string;
+  index: number;
+  alt: string;
+}
 
 export const ScrollContext = createContext({
   showSidebar: false,
@@ -23,6 +29,25 @@ export const ScrollContext = createContext({
     b;
   },
   spacerEl: null as HTMLDivElement | null,
+  firstLoad: true,
+  setFirstLoad: (b: boolean) => {
+    b;
+  },
+
+  activeImage: undefined as ActiveImage | undefined,
+  setActiveImage: (image: ActiveImage | undefined) => {
+    image;
+  },
+
+  showGallery: true,
+  setShowGallery: (b: boolean) => {
+    b;
+  },
+
+  showCarousel: false,
+  setShowCarousel: (b: boolean) => {
+    b;
+  },
 });
 
 export default function Layout() {
@@ -37,6 +62,12 @@ export default function Layout() {
   const location = useLocation();
   const isImagesRoute =
     location.pathname === "/" || location.pathname.startsWith("/motion");
+  const [activeImage, setActiveImage] = useState<ActiveImage | undefined>(
+    undefined,
+  );
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
@@ -51,10 +82,9 @@ export default function Layout() {
     if (!headerEl || !containerEl || !spacerEl) return;
 
     const handleScroll = () => {
-      // spacerEl.scrollIntoView({
-      //   behavior: "smooth", // or "auto"
-      //   block: "start", // align to top of viewport
-      // });
+      setTimeout(() => {
+        setShowGallery(true);
+      }, 600);
       setIsVisible(false);
       setIsStartup(false);
 
@@ -69,7 +99,6 @@ export default function Layout() {
     });
     headerEl.addEventListener("touchmove", handleScroll, { passive: false });
 
-    // Clean up everything
     return () => {
       headerEl.removeEventListener("wheel", handleScroll);
       headerEl.removeEventListener("touchstart", handleScroll);
@@ -88,6 +117,14 @@ export default function Layout() {
         isStartup,
         setIsStartup,
         spacerEl: spacerRef.current,
+        activeImage,
+        setActiveImage,
+        showGallery,
+        setShowGallery,
+        showCarousel,
+        setShowCarousel,
+        firstLoad,
+        setFirstLoad,
       }}
     >
       <header
@@ -103,35 +140,38 @@ export default function Layout() {
         className="h-screen overflow-y-scroll scroll-smooth "
         ref={containerRef}
       >
-        <div
-          className="w-full bg-gray-100 h"
-          style={{
-            height: "100vh",
-            maxHeight: isVisible
-              ? "100vh"
-              : `${HEADER_HEIGHT_WITH_MARGIN_VH}vh`,
-            transition: "max-height 0.6s ease-in-out",
-          }}
-          ref={spacerRef}
-        />
+        <ScrollIndicator />
 
-        <main className="flex flex-col items-end justify-center w-full bg-gray-100 ">
-          <ScrollIndicator />
-          {!isMobile ? <div className="basis-1/4 shrink-0 relative" /> : null}
-          <div
-            className=" relative min-h-[82vh] bg-gray-100 "
-            style={{
-              width: isMobile ? "100%" : "75%",
+        <AnimatePresence mode="wait" initial={true}>
+          <motion.div
+            className="w-full bg-gray-100 h"
+            key="spacer"
+            ref={spacerRef}
+            style={{ height: "100vh" }}
+            initial={{ maxHeight: `${HEADER_HEIGHT_WITH_MARGIN_VH}vh` }}
+            animate={{
+              maxHeight: isVisible
+                ? "100vh"
+                : `${HEADER_HEIGHT_WITH_MARGIN_VH}vh`,
             }}
-          >
-            <AnimatePresence mode="wait" initial={true}>
+            transition={{ duration: 0.56, ease: "easeInOut" }}
+          />
+
+          <main className="flex flex-col items-end justify-center w-full bg-gray-100 ">
+            {!isMobile ? <div className="basis-1/4 shrink-0 relative" /> : null}
+            <div
+              className=" relative min-h-[82vh] bg-gray-100 "
+              style={{
+                width: isMobile ? "100%" : "75%",
+              }}
+            >
               {outlet &&
                 React.cloneElement(outlet, {
                   key: isImagesRoute ? "images" : location.pathname,
                 })}
-            </AnimatePresence>
-          </div>
-        </main>
+            </div>
+          </main>
+        </AnimatePresence>
       </div>
     </ScrollContext.Provider>
   );

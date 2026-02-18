@@ -7,8 +7,8 @@ import {
   usePrevNextButtons,
 } from "./emblaCarouselArrowButtons";
 import useEmblaCarousel from "embla-carousel-react";
-import { Image, type ImageType } from "../image";
-import type { ActiveImage } from "../images";
+import { _Image as Image, type ImageType } from "../image";
+import type { ActiveImage } from "../../routes/layout";
 
 type PropType = {
   slides: ImageType[];
