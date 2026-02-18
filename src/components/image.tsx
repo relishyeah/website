@@ -1,6 +1,5 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
-import { ScrollContext } from "../routes/layout";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 export type ImageType = {
   src: string;
@@ -26,42 +25,14 @@ export const _Image = (props: ImageProps) => {
 
   const lowRes = `${import.meta.env.BASE_URL}assets/images/lowRes/${filepath}/${cleanName}`;
 
-  const { firstLoad, setFirstLoad, showGallery } = useContext(ScrollContext);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const { id } = props;
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (showGallery) {
-      if (firstLoad) {
-        controls.start("firstLoad");
-        setTimeout(() => {
-          setFirstLoad(false);
-        }, 1000);
-      } else {
-        controls.start("visible");
-      }
-    }
-  }, [showGallery]);
 
   useEffect(() => {
     const img = new Image();
     img.src = src;
     img.onload = () => setLoaded(true);
   }, [src]);
-
-  const imageVariants = {
-    hidden: { opacity: 0 },
-    firstLoad: (custom: number) => ({
-      opacity: 1,
-      y: [-10, 0],
-      transition: { delay: 0.56 + custom * 0.25, duration: 0.5 },
-    }),
-    visible: (custom: number) => ({
-      opacity: 1,
-      transition: { delay: 0.2 + custom * 0.1, duration: 0.5 },
-    }),
-  };
 
   if (!props.isCarousel) {
     return (
@@ -79,12 +50,10 @@ export const _Image = (props: ImageProps) => {
             alt={alt}
             custom={props.index}
             initial="hidden"
-            animate={controls}
-            variants={imageVariants}
             draggable="false"
             width={235}
             height={293}
-            className="  transition-filter duration-500 ease-out"
+            className="  transition-filter duration-500 ease-out "
             style={{
               objectFit: "fill",
               filter: "blur(16px)",
@@ -96,12 +65,10 @@ export const _Image = (props: ImageProps) => {
             alt={alt}
             custom={props.index}
             initial="hidden"
-            animate={controls}
-            variants={imageVariants}
             draggable="false"
             width={235}
             height={293}
-            className="  transition-filter duration-500 ease-out"
+            className="  transition-filter duration-500 ease-out "
             style={{
               objectFit: "contain",
             }}
