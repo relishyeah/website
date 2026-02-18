@@ -7,9 +7,9 @@ import fs from "fs";
 2;
 
 const INPUT_FOLDER = "src/assets/images"; // Change to where your originals live
-const OUTPUT_FOLDER = "public/assets/images"; // Where the low‑quality versions will go
-const WIDTH = 50; // width of the LQ versions
-const QUALITY = 30; // quality % (lower means smaller)
+const OUTPUT_FOLDER = "public/assets/images/lowRes"; // Where the low‑quality versions will go
+const WIDTH = 20; // width of the LQ versions
+const QUALITY = 20; // quality % (lower means smaller)
 
 async function generateLowQuality() {
   if (!fs.existsSync(OUTPUT_FOLDER)) {

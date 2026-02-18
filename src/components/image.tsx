@@ -5,6 +5,8 @@ import { ScrollContext } from "../routes/layout";
 export type ImageType = {
   src: string;
   alt: string;
+  filepath?: "liveMusic" | "motion";
+
   onClick?: () => void;
 };
 type ImageProps = {
@@ -15,9 +17,16 @@ type ImageProps = {
 };
 
 export const _Image = (props: ImageProps) => {
-  const { src, alt, onClick } = props.data;
+  const { src, alt, onClick, filepath } = props.data;
 
-  const lowRes = src.replace("src", "public");
+  const parts = src.split("/");
+
+  const fileName = parts[parts.length - 1];
+  const cleanName = fileName.replace(/^([^-]+-[^-]+)-.*(\.[^.]+)$/, "$1$2");
+
+  const lowRes = `${import.meta.env.BASE_URL}assets/images/lowRes/${filepath}/${cleanName}`;
+
+  console.log("lowRes is", lowRes, "highRes is", src);
   const [currentSrc, setCurrentSrc] = useState(lowRes);
 
   const { firstLoad, setFirstLoad, showGallery } = useContext(ScrollContext);
@@ -39,11 +48,10 @@ export const _Image = (props: ImageProps) => {
   }, [showGallery]);
 
   useEffect(() => {
-    // Preload the high-res image
-    const fullImg = new Image();
-    fullImg.src = src;
-    fullImg.onload = () => setCurrentSrc(src);
-  }, [src]);
+    const img = new Image();
+    img.src = src;
+    img.onload = () => setCurrentSrc(src);
+  }, [lowRes, src]);
 
   const imageVariants = {
     hidden: { opacity: 0 },

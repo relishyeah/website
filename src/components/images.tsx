@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect } from "react";
 import { Masonry } from "masonic";
 import EmblaCarousel from "./carousel/emblaCarousel";
 import { AnimatePresence, motion } from "motion/react";
@@ -33,19 +33,6 @@ const Images = (props: { filepath: "liveMusic" | "motion" }) => {
     setShowCarousel,
   } = useContext(ScrollContext);
 
-  const path = useRef<null | "liveMusic" | "motion">(null);
-
-  useEffect(() => {
-    if (!path.current) {
-      path.current = props.filepath;
-      return;
-    }
-    if (path.current === props.filepath) return;
-
-    setShowCarousel(false);
-    setShowGallery(true);
-  }, [props.filepath]);
-
   useEffect(() => {
     const urls = Object.values(fileNames).map((mod) => (mod as any).default);
 
@@ -69,6 +56,7 @@ const Images = (props: { filepath: "liveMusic" | "motion" }) => {
       return {
         src: module.default,
         alt,
+        filepath: props.filepath,
         onClick: () => {
           if (showCarousel) return;
           setActiveImage({ image: module.default, index, alt });

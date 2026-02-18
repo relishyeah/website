@@ -9,13 +9,21 @@ type Props = {
 };
 
 const NavLink = ({ to, children }: Props) => {
-  const { isMobile, setShowSidebar, setIsVisible, isVisible } =
-    useContext(ScrollContext);
+  const {
+    isMobile,
+    setShowSidebar,
+    setIsVisible,
+    isVisible,
+    setShowGallery,
+    setShowCarousel,
+  } = useContext(ScrollContext);
 
   const onClickLink = () => {
     if (isMobile) {
       setShowSidebar(false);
     }
+    setShowCarousel(false);
+    setShowGallery(true);
     setIsVisible(false);
   };
   return (

@@ -20,7 +20,7 @@ export default function About() {
       transition={{ duration: ANIMATION_DURATION_S, ease: "easeInOut" }}
     >
       <div className="flex justify-center items-center space-x-4 mb-6">
-        <img src={imgMe} alt="Picture of me2" className="w-auto h-[32vh]" />
+        <img src={imgMe} alt="Picture of me" className="w-auto h-[32vh]" />
 
         <div className="flex flex-col justify-center items-start text-2xl space-y-1 font-medium">
           <span>web dev</span>
