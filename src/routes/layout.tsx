@@ -28,7 +28,7 @@ export const ScrollContext = createContext({
   setIsStartup: (b: boolean) => {
     b;
   },
-  spacerEl: null as HTMLDivElement | null,
+  containerEl: null as HTMLDivElement | null,
   firstLoad: true,
   setFirstLoad: (b: boolean) => {
     b;
@@ -116,7 +116,7 @@ export default function Layout() {
         setIsVisible,
         isStartup,
         setIsStartup,
-        spacerEl: spacerRef.current,
+        containerEl: containerRef.current,
         activeImage,
         setActiveImage,
         showGallery,
@@ -160,7 +160,7 @@ export default function Layout() {
           <main className="flex flex-col items-end justify-center w-full bg-gray-100 ">
             {!isMobile ? <div className="basis-1/4 shrink-0 relative" /> : null}
             <div
-              className=" relative min-h-[82vh] bg-gray-100 "
+              className=" relative min-h-[82vh] bg-gray-100 overflow-x-hidden"
               style={{
                 width: isMobile ? "100%" : "75%",
               }}

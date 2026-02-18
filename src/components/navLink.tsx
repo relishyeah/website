@@ -16,12 +16,14 @@ const NavLink = ({ to, children }: Props) => {
     isVisible,
     setShowGallery,
     setShowCarousel,
+    containerEl,
   } = useContext(ScrollContext);
 
   const onClickLink = () => {
     if (isMobile) {
       setShowSidebar(false);
     }
+    containerEl?.scrollTo({ top: 0, behavior: "instant" });
     setShowCarousel(false);
     setShowGallery(true);
     setIsVisible(false);

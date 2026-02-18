@@ -18,16 +18,13 @@ type ImageProps = {
 
 export const _Image = (props: ImageProps) => {
   const { src, alt, onClick, filepath } = props.data;
+  const [loaded, setLoaded] = useState(false);
 
   const parts = src.split("/");
-
   const fileName = parts[parts.length - 1];
   const cleanName = fileName.replace(/^([^-]+-[^-]+)-.*(\.[^.]+)$/, "$1$2");
 
   const lowRes = `${import.meta.env.BASE_URL}assets/images/lowRes/${filepath}/${cleanName}`;
-
-  console.log("lowRes is", lowRes, "highRes is", src);
-  const [currentSrc, setCurrentSrc] = useState(lowRes);
 
   const { firstLoad, setFirstLoad, showGallery } = useContext(ScrollContext);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -50,8 +47,8 @@ export const _Image = (props: ImageProps) => {
   useEffect(() => {
     const img = new Image();
     img.src = src;
-    img.onload = () => setCurrentSrc(src);
-  }, [lowRes, src]);
+    img.onload = () => setLoaded(true);
+  }, [src]);
 
   const imageVariants = {
     hidden: { opacity: 0 },
@@ -76,22 +73,40 @@ export const _Image = (props: ImageProps) => {
         className="p-2 w-full h-auto max-h-full"
         style={{ cursor: "pointer", background: "transparent", border: "none" }}
       >
-        <motion.img
-          src={currentSrc}
-          alt={alt}
-          custom={props.index}
-          initial="hidden"
-          animate={controls}
-          variants={imageVariants}
-          draggable="false"
-          width={235}
-          height={293}
-          className="  transition-filter duration-500 ease-out"
-          style={{
-            objectFit: currentSrc === lowRes ? "fill" : "contain",
-            filter: currentSrc === lowRes ? "blur(16px)" : "none",
-          }}
-        />
+        {!loaded ? (
+          <motion.img
+            src={lowRes}
+            alt={alt}
+            custom={props.index}
+            initial="hidden"
+            animate={controls}
+            variants={imageVariants}
+            draggable="false"
+            width={235}
+            height={293}
+            className="  transition-filter duration-500 ease-out"
+            style={{
+              objectFit: "fill",
+              filter: "blur(16px)",
+            }}
+          />
+        ) : (
+          <motion.img
+            src={src}
+            alt={alt}
+            custom={props.index}
+            initial="hidden"
+            animate={controls}
+            variants={imageVariants}
+            draggable="false"
+            width={235}
+            height={293}
+            className="  transition-filter duration-500 ease-out"
+            style={{
+              objectFit: "contain",
+            }}
+          />
+        )}
       </button>
     );
   }
