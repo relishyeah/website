@@ -51,7 +51,7 @@ const Images = (props: { filepath: "liveMusic" | "motion" }) => {
 
       const match = filename.match(/^(\d+)-([^-]+)\.(png|jpg|jpeg|svg)$/i);
 
-      const alt = match ? match[2].replace(/_/g, " ") : "idiot fuckong loser";
+      const alt = match ? match[2].replace(/_/g, " ") : "";
 
       return {
         src: module.default,
